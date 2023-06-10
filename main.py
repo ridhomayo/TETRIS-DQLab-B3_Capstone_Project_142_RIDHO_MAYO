@@ -9,26 +9,26 @@ from numerize import numerize
 st.set_page_config(layout='wide')
 
 ## csv files
-file_uang = 'data\data_keuangan_202306101536.csv'
+# file_uang = 'data\data_keuangan_202306101536.csv'
 file_daily_visit = 'data\daily_visit_202306100001.csv'
 file_monthly_visit = 'data\monthly_visit_202306101437.csv'
 file_monthly_sale = 'data\pendapatan_tahun_bulan_202306101645.csv'
 
 
 ## setting to datasets
-df_uang = pd.read_csv(file_uang)
+# df_uang = pd.read_csv(file_uang)
 df_visit = pd.read_csv(file_daily_visit)
 df_month_visit = pd.read_csv(file_monthly_visit)
 df_month_sale = pd.read_csv(file_monthly_sale)
 
 ## change the text format to date
-df_uang['REG_DATE'] = pd.to_datetime(df_uang['REG_DATE'])
-df_uang['INV_DATE'] = pd.to_datetime(df_uang['INV_DATE'])
+# df_uang['REG_DATE'] = pd.to_datetime(df_uang['REG_DATE'])
+# df_uang['INV_DATE'] = pd.to_datetime(df_uang['INV_DATE'])
 
 
 ## setting current year and previous year
-CURR_YEAR = max(df_uang['REG_DATE'].dt.year)
-PREV_YEAR = CURR_YEAR - 1
+# CURR_YEAR = max(df_uang['REG_DATE'].dt.year)
+# PREV_YEAR = CURR_YEAR - 1
 
 
 
@@ -98,10 +98,10 @@ with mx_komparasi:
     )
 
 ## showing the dataset
-# st.subheader('Dataset Pendapatan')
-# df_month_sale
-st.subheader('Dataset Pembayaran')
-df_uang
+st.subheader('Dataset Pendapatan')
+df_month_sale
+# st.subheader('Dataset Pembayaran')
+# df_uang
 
 
 
