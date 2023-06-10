@@ -13,6 +13,8 @@ st.set_page_config(layout='wide')
 file_daily_visit = 'daily_visit_202306100001.csv'
 file_monthly_visit = 'monthly_visit_202306101437.csv'
 file_monthly_sale = 'pendapatan_tahun_bulan_202306101645.csv'
+file_most_visit = 'most_visit_person_202306100023.csv'
+file_most_sale_alltime = 'service_total_limited8_202306102118.csv'
 
 
 ## setting to datasets
@@ -20,6 +22,8 @@ file_monthly_sale = 'pendapatan_tahun_bulan_202306101645.csv'
 df_visit = pd.read_csv(file_daily_visit)
 df_month_visit = pd.read_csv(file_monthly_visit)
 df_month_sale = pd.read_csv(file_monthly_sale)
+df_most_visit = pd.read_csv(file_most_visit)
+df_most_sale_alltime = pd.read_csv(file_most_sale_alltime)
 
 ## change the text format to date
 # df_uang['REG_DATE'] = pd.to_datetime(df_uang['REG_DATE'])
@@ -57,13 +61,16 @@ with mx_test:
     
     st.metric(label="Pemeriksaan terbanyak di bulan tersebut", value=year_month_sale, delta=monthly_sale)
 
+st.write('')
+st.write('')
+
 mx_grafik_kunjungan, mx_komparasi= st.columns([2,1])
 
 with mx_grafik_kunjungan:
     st.subheader('Jumlah Kunjungan per Tahun-Bulan')
-    
+
     grafik_kunjungan_garis = alt.Chart(df_month_visit).mark_line().encode(
-    x=alt.X("year_month_visit", title='Tahun dan Bulan Kunjungan'),
+    x=alt.X("year_month_visit", title='Tahun dan Bulan'),
     y=alt.Y("monthly_visit", title='Jumlah Pengunjung'),
     ).properties(width=900).interactive()
     
@@ -76,18 +83,29 @@ with mx_grafik_kunjungan:
     grafik_kunjungan
 
 with mx_komparasi:
-     # Menghitung total kunjungan dari 2021-05 hingga 2022-05
-    total_visit_before = df_month_visit[(df_month_visit['year_month_visit'] >= '2021-05') & (df_month_visit['year_month_visit'] <= '2022-05')]['monthly_visit'].sum()
 
-    # Menghitung total kunjungan dari 2022-06 hingga 2023-06
-    total_visit_after = df_month_visit[(df_month_visit['year_month_visit'] >= '2022-06') & (df_month_visit['year_month_visit'] <= '2023-06')]['monthly_visit'].sum()
+    mx_selisih, mx_trivia = st.columns(2)
+    with mx_selisih :
+        # Menghitung total kunjungan dari 2021-05 hingga 2022-05
+        total_visit_before = df_month_visit[(df_month_visit['year_month_visit'] >= '2021-05') & (df_month_visit['year_month_visit'] <= '2022-05')]['monthly_visit'].sum()
 
-    # Calculate the delta (difference)
-    delta_kunjungan_tahun = int(total_visit_after) - int(total_visit_before)
+        # Menghitung total kunjungan dari 2022-06 hingga 2023-06
+        total_visit_after = df_month_visit[(df_month_visit['year_month_visit'] >= '2022-06') & (df_month_visit['year_month_visit'] <= '2023-06')]['monthly_visit'].sum()
 
-    # Menampilkan hasil menggunakan metric widget
-    st.metric(label='Total kunjungan hingga Juni 2022', value=total_visit_before)
-    st.metric(label='Total kunjungan hingga Juni 2023', value=total_visit_after, delta=delta_kunjungan_tahun)
+        # Calculate the delta (difference)
+        delta_kunjungan_tahun = int(total_visit_after) - int(total_visit_before)
+
+        # Menampilkan hasil menggunakan metric widget
+        st.metric(label='Total kunjungan hingga Juni 2022', value=total_visit_before)
+        st.metric(label='Total kunjungan hingga Juni 2023', value=total_visit_after, delta=delta_kunjungan_tahun)
+
+    with mx_trivia:
+        
+        max_visit_trivia_row = df_most_visit.loc[df_most_visit['times_visited'].idxmax()]
+        nama_trivia = max_visit_trivia_row['PATIENT_NAME']
+        nama_trivia_visit = int(max_visit_trivia_row['times_visited'])
+
+        st.metric(label='Pengunjung Paling Sering', value=nama_trivia, delta= nama_trivia_visit)
 
     st.write(
         '''
@@ -96,6 +114,13 @@ with mx_komparasi:
         Strategi yang diupayakan Helix kemudian adalah menawarkan promo Medical Check-Up agar Helix lebih dikenal.
         '''
     )
+st.write('')
+st.subheader('Jenis Layanan Favorit')
+grafik_penjualan_alltime = alt.Chart(df_most_sale_alltime).mark_bar().encode(
+    x=alt.X('jumlah_pembelian', title='Jumlah'),
+    y=alt.Y('LIST_TEST',title='Jenis Pemeriksaan', sort=alt.EncodingSortField(field='Jumlah', order='descending'))
+).properties(height= 400,width=600).interactive()
+grafik_penjualan_alltime
 
 ## showing the dataset
 st.subheader('Dataset Pendapatan')
