@@ -10,9 +10,9 @@ st.set_page_config(layout='wide')
 
 ## csv files
 # file_uang = 'data\data_keuangan_202306101536.csv'
-file_daily_visit = 'data\daily_visit_202306100001.csv'
-file_monthly_visit = 'data\monthly_visit_202306101437.csv'
-file_monthly_sale = 'data\pendapatan_tahun_bulan_202306101645.csv'
+file_daily_visit = 'daily_visit_202306100001.csv'
+file_monthly_visit = 'monthly_visit_202306101437.csv'
+file_monthly_sale = 'pendapatan_tahun_bulan_202306101645.csv'
 
 
 ## setting to datasets
