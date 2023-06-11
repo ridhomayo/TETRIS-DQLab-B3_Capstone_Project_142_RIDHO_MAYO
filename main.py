@@ -15,6 +15,8 @@ file_monthly_visit = 'monthly_visit_202306101437.csv'
 file_monthly_sale = 'pendapatan_tahun_bulan_202306101645.csv'
 file_most_visit = 'most_visit_person_202306100023.csv'
 file_most_sale_alltime = 'service_total_limited8_202306102118.csv'
+file_layanan_daily = 'service_daily_202306120026.csv'
+file_layanan_monthly = 'service_monthly_202306120046.csv'
 
 
 ## setting to datasets
@@ -24,6 +26,8 @@ df_month_visit = pd.read_csv(file_monthly_visit)
 df_month_sale = pd.read_csv(file_monthly_sale)
 df_most_visit = pd.read_csv(file_most_visit)
 df_most_sale_alltime = pd.read_csv(file_most_sale_alltime)
+df_layanan_monthly = pd.read_csv(file_layanan_monthly)
+df_layanan_daily = pd.read_csv(file_layanan_daily)
 
 ## change the text format to date
 # df_uang['REG_DATE'] = pd.to_datetime(df_uang['REG_DATE'])
@@ -115,12 +119,47 @@ with mx_komparasi:
         '''
     )
 st.write('')
+
+
 st.subheader('Jenis Layanan Favorit')
 grafik_penjualan_alltime = alt.Chart(df_most_sale_alltime).mark_bar().encode(
-    x=alt.X('jumlah_pembelian', title='Jumlah'),
-    y=alt.Y('LIST_TEST',title='Jenis Pemeriksaan', sort=alt.EncodingSortField(field='Jumlah', order='descending'))
-).properties(height= 400,width=600).interactive()
+       x=alt.X('jumlah_pembelian', title='Jumlah'),
+       y=alt.Y('LIST_TEST',title='Jenis Pemeriksaan', sort=alt.EncodingSortField(field='Jumlah', order='descending'))
+).properties(height= 400,width=800).interactive()
 grafik_penjualan_alltime
+
+
+   
+    # grafik_layanan_monthly = alt.Chart(df_layanan_daily).mark_line()
+
+# Pivot the dataframe
+df_pivot = pd.pivot_table(df_layanan_monthly, values='jumlah', index='tanggal', columns='TEST_NAME')
+
+# Reset the index to make 'tanggal' a regular column
+df_pivot = df_pivot.reset_index()
+
+chart = alt.Chart(df_layanan_monthly).mark_line().encode(
+    x='tanggal:T',
+    y='jumlah:Q',
+    color='TEST_NAME:N'
+).properties(
+    width=1000,
+    height=400
+)
+
+# Add axis labels and title
+chart = chart.configure_axis(
+    labelFontSize=12,
+    titleFontSize=14
+).configure_title(
+    fontSize=16
+).interactive()
+
+st.subheader('Pertumbuhan Layanan')
+# Display the chart
+chart
+
+
 
 ## showing the dataset
 st.subheader('Dataset Pendapatan')
